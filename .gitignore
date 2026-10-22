@@ -1,0 +1,68 @@
+## === Java / Maven ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+mvnw.cmd
+!mvnw
+
+## === Node / Vue / Vite ===
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+## === IDE / Editor ===
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+## === 密钥 / 敏感配置 ===
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+!*.pem.example
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-prod.yml
+
+## === 数据库 ===
+*.sql
+!backend/src/main/resources/schema.sql
+
+## === 系统 ===
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+## === 临时文件 ===
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+
+## === 生成产物 ===
+posters/
+*.poster.png
+
+## === Python ===
+__pycache__/
+*.pyc
+*.pyo
