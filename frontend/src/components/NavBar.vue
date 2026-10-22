@@ -71,17 +71,23 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 const keyword = ref('')
 const mobileMenuOpen = ref(false)
 
 const doSearch = () => {
   const kw = keyword.value.trim()
   if (!kw) return
+  // 已在景点推荐页时，直接在本页组合筛选，避免跳转丢失榜单上下文
+  if (route.path === '/spots') {
+    router.push({ path: '/spots', query: { keyword: kw } })
+    return
+  }
   router.push({ path: '/search', query: { keyword: kw } })
 }
 
@@ -93,8 +99,8 @@ const handleLogout = () => {
 
 <style scoped>
 .navbar {
-  height: 68px;
-  background: rgba(251, 248, 241, 0.88);
+  height: 66px;
+  background: rgba(255, 253, 249, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(191, 77, 46, 0.10);

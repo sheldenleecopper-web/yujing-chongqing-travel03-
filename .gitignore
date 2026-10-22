@@ -44,6 +44,14 @@ backend/src/main/resources/application-prod.yml
 ## === 数据库 ===
 *.sql
 !backend/src/main/resources/schema.sql
+!backend/schema.sql
+!backend/db/*.sql
+
+## === 验证截图 / 备份 / 本地覆盖 ===
+frontend/.shots/
+frontend/.playwright-cli/
+backups/
+*.local
 
 ## === 系统 ===
 .DS_Store

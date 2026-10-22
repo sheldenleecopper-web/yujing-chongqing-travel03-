@@ -31,20 +31,21 @@
         </el-tab-pane>
 
         <el-tab-pane label="我的行程" name="trip">
-          <div class="trip-header" v-if="selectedStore.spotIds.length">
-            <span>已选 {{ selectedStore.spotIds.length }} 个去处</span>
-            <el-button type="danger" @click="goGuideForm">生成攻略</el-button>
+          <div class="trip-header">
+            <span>行程中共 {{ tripSpots.length }} 个景点</span>
+            <el-button type="danger" @click="goGuideForm" :disabled="!selectedStore.spotIds.length">生成攻略</el-button>
           </div>
-          <el-row :gutter="18" v-if="selectedStore.spotIds.length" class="tab-grid">
-            <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="(name, i) in selectedStore.spotNames" :key="i">
-              <el-card class="trip-card" shadow="never">
+          <el-row :gutter="18" v-if="tripSpots.length" class="tab-grid">
+            <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="(spot, i) in tripSpots" :key="spot.id">
+              <el-card class="trip-card" shadow="never" @click="$router.push(`/spot/${spot.id}`)">
                 <div class="trip-num">{{ i + 1 }}</div>
-                <div class="trip-name">{{ name }}</div>
-                <el-button size="small" type="danger" plain @click="removeTripSpot(i)">移除</el-button>
+                <div class="trip-name">{{ spot.name }}</div>
+                <div class="trip-region">{{ spot.region }}</div>
+                <el-button size="small" type="danger" plain @click.stop="removeTripItem(spot)">移除</el-button>
               </el-card>
             </el-col>
           </el-row>
-          <el-empty v-else description="暂无行程，去首页或景点推荐选择去处吧" />
+          <el-empty v-else description="暂无行程，去景点推荐添加心仪的景点吧" />
         </el-tab-pane>
 
         <el-tab-pane label="攻略历史记录" name="guide">
@@ -107,7 +108,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import NavBar from '../components/NavBar.vue'
 import SpotCard from '../components/SpotCard.vue'
-import { getFavoriteList, removeFavorite, getBrowseHistory, clearBrowseHistory, addFavorite, getPosterRecordList, getUserInfo, getGuideList, deleteGuide } from '../api'
+import { getFavoriteList, removeFavorite, getBrowseHistory, clearBrowseHistory, addFavorite, getPosterRecordList, getUserInfo, getGuideList, deleteGuide, getTrip, removeTripSpot } from '../api'
 import { useSelectedStore } from '../store/selected'
 import { useRouter } from 'vue-router'
 
@@ -119,6 +120,7 @@ const posters = ref([])
 const browseList = ref([])
 const guideList = ref([])
 const userInfo = ref({})
+const tripSpots = ref([])
 
 onMounted(loadAll)
 
@@ -128,6 +130,12 @@ async function loadAll() {
   try { posters.value = await getPosterRecordList() } catch (e) {}
   try { browseList.value = await getBrowseHistory() } catch (e) {}
   try { guideList.value = await getGuideList() } catch (e) {}
+  try {
+    // 行程以数据库为准，并同步到本地选择列表以便生成攻略
+    const trip = await getTrip()
+    tripSpots.value = trip?.spots || []
+    tripSpots.value.forEach(s => selectedStore.addSpot(s.id, s.name))
+  } catch (e) {}
 }
 
 const addToSelected = (spot) => {
@@ -156,10 +164,13 @@ const clearBrowse = async () => {
   } catch (e) {}
 }
 
-const removeTripSpot = (index) => {
-  const id = selectedStore.spotIds[index]
-  selectedStore.removeSpot(id)
-  ElMessage.success('已移除')
+const removeTripItem = async (spot) => {
+  try {
+    await removeTripSpot(spot.id)
+    tripSpots.value = tripSpots.value.filter(s => s.id !== spot.id)
+    selectedStore.removeSpot(spot.id)
+    ElMessage.success('已从行程中移除')
+  } catch (e) {}
 }
 
 const goGuideForm = () => {
@@ -289,7 +300,8 @@ const downloadPoster = (g) => {
   display: flex; align-items: center; justify-content: center;
   font-family: var(--yj-font-serif);
 }
-.trip-name { font-size: 16px; font-weight: 600; margin-bottom: 14px; color: var(--yj-ink); }
+.trip-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--yj-ink); }
+.trip-region { font-size: 12px; color: var(--yj-muted); margin-bottom: 14px; }
 
 /* ---- 攻略 / 海报卡 ---- */
 .poster-card, .guide-card {

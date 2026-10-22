@@ -9,6 +9,8 @@ export const getUserInfo = () => request.get('/user/info')
 export const getSpotList = (params) => request.get('/spot/list', { params })
 export const getSpotDetail = (id) => request.get(`/spot/${id}`)
 export const searchSpots = (keyword) => request.get('/spot/search', { params: { keyword } })
+// 景点榜：category / sort / keyword / page / size
+export const getSpotRank = (params) => request.get('/spot/rank', { params })
 
 // 非遗
 export const getHeritageList = (params) => request.get('/heritage/list', { params })
@@ -19,6 +21,11 @@ export const searchHeritage = (keyword) => request.get('/heritage/search', { par
 export const addFavorite = (spotId) => request.post('/favorite/add', { spotId })
 export const removeFavorite = (spotId) => request.post('/favorite/remove', { spotId })
 export const getFavoriteList = () => request.get('/favorite/list')
+
+// 行程（后端持久化，需登录）
+export const getTrip = () => request.get('/trip/list')
+export const addTripSpot = (spotId) => request.post('/trip/add', { spotId })
+export const removeTripSpot = (spotId) => request.post('/trip/remove', { spotId })
 
 // 浏览记录
 export const getBrowseHistory = () => request.get('/history/browse')

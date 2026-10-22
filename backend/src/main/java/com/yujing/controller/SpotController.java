@@ -1,5 +1,6 @@
 package com.yujing.controller;
 
+import com.yujing.common.PageResult;
 import com.yujing.common.Result;
 import com.yujing.entity.Spot;
 import com.yujing.service.SpotService;
@@ -21,6 +22,19 @@ public class SpotController {
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String sort) {
         return Result.success(spotService.list(type, region, sort));
+    }
+
+    /**
+     * 景点榜：分类筛选 / 关键词搜索 / 排序 / 分页
+     */
+    @GetMapping("/rank")
+    public Result<PageResult<Spot>> rank(
+            @RequestParam(defaultValue = "all") String category,
+            @RequestParam(defaultValue = "heat") String sort,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return Result.success(spotService.rank(category, sort, keyword, page, size));
     }
 
     @GetMapping("/search")

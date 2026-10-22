@@ -4,8 +4,9 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/yujing?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: 123456
+    username: ${DB_USERNAME:root}
+    # 密钥不入库明文：本地默认值保留，生产环境用 DB_PASSWORD 环境变量覆盖
+    password: ${DB_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -28,7 +29,8 @@ deepseek:
   timeout: 60000
 
 jwt:
-  secret: yujing-travel-secret-key-2024-at-least-256-bits-long-for-hs256
+  # 生产环境请用 JWT_SECRET 环境变量覆盖
+  secret: ${JWT_SECRET:yujing-travel-secret-key-2024-at-least-256-bits-long-for-hs256}
   expire: 86400000
 
 poster:
